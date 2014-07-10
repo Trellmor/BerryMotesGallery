@@ -1,0 +1,32 @@
+<!-- 
+	BerryMotes Gallery 
+	Copyright (C) 2014 Daniel Triendl <trellmor@trellmor.com>
+	
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	 
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<resources>
+
+    <string name="app_name">BerryMotes Gallery</string>
+    <string name="title_emote_list">Emotes</string>
+    <string name="title_emote_detail">Emote Detail</string>
+    <string name="emote">Emote</string>
+    <string name="action_share">Share</string>
+    <string name="action_settings">Settings</string>
+    <string name="loading_image">Loading image&#8230;</string>
+	<string name="berrymotes_not_installed">BerryMotes is missing or outdated. Install the current version from the Play store.</string>
+	<string name="search_title">Search emotes</string>
+	<string name="emotename_copied">Emote code has been copied to clipboard</string>
+    
+</resources>
