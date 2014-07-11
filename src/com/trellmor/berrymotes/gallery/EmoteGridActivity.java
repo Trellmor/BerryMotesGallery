@@ -52,7 +52,6 @@ import com.trellmor.widget.ShareActionProvider;
 public class EmoteGridActivity extends ActionBarActivity implements
 		EmoteGridFragment.Callbacks, EmoteDetailFragment.Callbacks,
 		ShareActionProvider.OnShareTargetSelectedListener {
-	private static final String TAG = EmoteGridActivity.class.getName();
 
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -132,7 +131,7 @@ public class EmoteGridActivity extends ActionBarActivity implements
 			mMenuShare.setSupportActionProvider(mShareActionProvider);
 		}
 
-		final MenuItem fMenuSearch = menu.findItem(R.id.search);
+		final SupportMenuItem fMenuSearch = (SupportMenuItem) menu.findItem(R.id.search);
 		final SearchView fSearch = (SearchView) fMenuSearch.getActionView();
 
 		fSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
