@@ -19,6 +19,7 @@
 package com.trellmor.berrymotes.gallery;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -27,9 +28,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
 
 import com.trellmor.berrymotes.EmoteUtils;
+import com.trellmor.berrymotes.provider.EmotesContract;
 import com.trellmor.berrymotes.provider.FileContract;
 import com.trellmor.widget.LoadingDialog;
 import com.trellmor.widget.ShareActionProvider;
@@ -70,7 +72,11 @@ public class EmoteGridActivity extends ActionBarActivity implements
 		mGridFragment = (EmoteGridFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.emote_grid);
 
-		if (findViewById(R.id.emote_detail_container) != null) {
+		View emoteDetailContainer = findViewById(R.id.emote_detail_container);
+		if (emoteDetailContainer != null) {
+			emoteDetailContainer.setVisibility((isPickIntent()) ? View.GONE
+					: View.VISIBLE);
+
 			// The detail container view will be present only in the
 			// large-screen layouts (res/values-large and
 			// res/values-sw600dp). If this view is present, then the
@@ -94,26 +100,31 @@ public class EmoteGridActivity extends ActionBarActivity implements
 	 */
 	@Override
 	public void onItemSelected(long id) {
-		if (mTwoPane) {
-			// In two-pane mode, show the detail view in this activity by
-			// adding or replacing the detail fragment using a
-			// fragment transaction.
-			Bundle arguments = new Bundle();
-			arguments.putLong(EmoteDetailFragment.ARG_EMOTE_ID, id);
-			EmoteDetailFragment fragment = new EmoteDetailFragment();
-			fragment.setArguments(arguments);
-			FragmentTransaction transaction = getSupportFragmentManager()
-					.beginTransaction();
-			transaction.replace(R.id.emote_detail_container, fragment);
-			transaction.addToBackStack(null);
-			transaction.commit();
-			mMenuShare.setVisible(false);
+		if (isPickIntent()) {
+			pickEmote(id);
 		} else {
-			// In single-pane mode, simply start the detail activity
-			// for the selected item ID.
-			Intent detailIntent = new Intent(this, EmoteDetailActivity.class);
-			detailIntent.putExtra(EmoteDetailFragment.ARG_EMOTE_ID, id);
-			startActivity(detailIntent);
+			if (mTwoPane) {
+				// In two-pane mode, show the detail view in this activity by
+				// adding or replacing the detail fragment using a
+				// fragment transaction.
+				Bundle arguments = new Bundle();
+				arguments.putLong(EmoteDetailFragment.ARG_EMOTE_ID, id);
+				EmoteDetailFragment fragment = new EmoteDetailFragment();
+				fragment.setArguments(arguments);
+				FragmentTransaction transaction = getSupportFragmentManager()
+						.beginTransaction();
+				transaction.replace(R.id.emote_detail_container, fragment);
+				transaction.addToBackStack(null);
+				transaction.commit();
+				mMenuShare.setVisible(false);
+			} else {
+				// In single-pane mode, simply start the detail activity
+				// for the selected item ID.
+				Intent detailIntent = new Intent(this,
+						EmoteDetailActivity.class);
+				detailIntent.putExtra(EmoteDetailFragment.ARG_EMOTE_ID, id);
+				startActivity(detailIntent);
+			}
 		}
 	}
 
@@ -204,5 +215,53 @@ public class EmoteGridActivity extends ActionBarActivity implements
 				});
 		task.execute(uri);
 		return true; // Handled
+	}
+
+	private boolean isPickIntent() {
+		String action = getIntent().getAction();
+		return (Intent.ACTION_PICK.equals(action) || Intent.ACTION_GET_CONTENT
+				.equals(action));
+	}
+
+	private void pickEmote(long id) {
+		Cursor c = getContentResolver().query(
+				EmotesContract.Emote.CONTENT_URI,
+				new String[] { EmotesContract.Emote.COLUMN_NAME,
+						EmotesContract.Emote.COLUMN_APNG },
+				EmotesContract.Emote._ID + "=?",
+				new String[] { Long.toString(id) }, null);
+
+		if (c.moveToFirst()) {
+			String name = c.getString(c
+					.getColumnIndex(EmotesContract.Emote.COLUMN_NAME));
+			boolean apng = c.getInt(c
+					.getColumnIndex(EmotesContract.Emote.COLUMN_APNG)) == 1;
+
+			Uri uri = FileContract.getUriForEmote(name, apng);
+			final Intent intent = new Intent();
+			intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+			final LoadingDialog dialog = new LoadingDialog(this);
+			dialog.setCancelable(false);
+			dialog.setText(R.string.loading_image);
+			dialog.show();
+
+			PreloadImageTask task = new PreloadImageTask(this,
+					new PreloadImageTask.Callback() {
+
+						@Override
+						public void onLoaded(boolean result) {
+							dialog.dismiss();
+
+							if (result) {
+								setResult(RESULT_OK, intent);
+								finish();
+							}
+
+						}
+					});
+			task.execute(uri);
+		}
+		c.close();
 	}
 }
