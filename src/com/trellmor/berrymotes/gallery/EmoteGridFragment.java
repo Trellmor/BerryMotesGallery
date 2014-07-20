@@ -18,15 +18,17 @@
 
 package com.trellmor.berrymotes.gallery;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
 
@@ -158,19 +160,25 @@ public class EmoteGridFragment extends Fragment {
 	 * Turns on activate-on-click mode. When this mode is on, list items will be
 	 * given the 'activated' state when touched.
 	 */
+	@SuppressLint("NewApi")
 	public void setActivateOnItemClick(boolean activateOnItemClick) {
 		// When setting CHOICE_MODE_SINGLE, ListView will automatically
 		// give items the 'activated' state when touched.
-		mGridEmotes
-				.setChoiceMode(activateOnItemClick ? GridView.CHOICE_MODE_SINGLE
-						: GridView.CHOICE_MODE_NONE);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			mGridEmotes
+					.setChoiceMode(activateOnItemClick ? GridView.CHOICE_MODE_SINGLE
+							: GridView.CHOICE_MODE_NONE);
+		}
 	}
 
+	@SuppressLint("NewApi")
 	private void setActivatedPosition(int position) {
-		if (position == ListView.INVALID_POSITION) {
-			mGridEmotes.setItemChecked(mActivatedPosition, false);
-		} else {
-			mGridEmotes.setItemChecked(position, true);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			if (position == ListView.INVALID_POSITION) {
+				mGridEmotes.setItemChecked(mActivatedPosition, false);
+			} else {
+				mGridEmotes.setItemChecked(position, true);
+			}
 		}
 
 		mActivatedPosition = position;

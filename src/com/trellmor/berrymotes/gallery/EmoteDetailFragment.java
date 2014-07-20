@@ -19,8 +19,7 @@
 package com.trellmor.berrymotes.gallery;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.text.ClipboardManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -125,8 +124,7 @@ public class EmoteDetailFragment extends Fragment implements
 			public void onClick(View v) {
 				if (mName != null) {
 					ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-					ClipData clip = ClipData.newPlainText(mName, "[](/" + mName + ")");
-					clipboard.setPrimaryClip(clip);
+					clipboard.setText("[](/" + mName + ")");
 					Toast.makeText(getActivity(), R.string.emotename_copied, Toast.LENGTH_SHORT).show();
 				}
 			}
