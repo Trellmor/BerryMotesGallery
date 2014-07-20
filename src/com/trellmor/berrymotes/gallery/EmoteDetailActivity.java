@@ -30,10 +30,10 @@ import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.trellmor.berrymotes.EmoteUtils;
 import com.trellmor.berrymotes.provider.FileContract;
+import com.trellmor.widget.LoadingDialog;
 import com.trellmor.widget.ShareActionProvider;
 
 /**
@@ -44,7 +44,9 @@ import com.trellmor.widget.ShareActionProvider;
  * This activity is mostly just a 'shell' activity containing nothing more than
  * a {@link EmoteDetailFragment}.
  */
-public class EmoteDetailActivity extends ActionBarActivity implements EmoteDetailFragment.Callbacks, ShareActionProvider.OnShareTargetSelectedListener {
+public class EmoteDetailActivity extends ActionBarActivity implements
+		EmoteDetailFragment.Callbacks,
+		ShareActionProvider.OnShareTargetSelectedListener {
 
 	private SupportMenuItem mMenuShare;
 	private ShareActionProvider mShareActionProvider;
@@ -78,12 +80,13 @@ public class EmoteDetailActivity extends ActionBarActivity implements EmoteDetai
 					.getLongExtra(EmoteDetailFragment.ARG_EMOTE_ID, -1));
 			EmoteDetailFragment fragment = new EmoteDetailFragment();
 			fragment.setArguments(arguments);
-			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			FragmentTransaction transaction = getSupportFragmentManager()
+					.beginTransaction();
 			transaction.add(R.id.emote_detail_container, fragment);
 			transaction.commit();
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -93,12 +96,12 @@ public class EmoteDetailActivity extends ActionBarActivity implements EmoteDetai
 		mMenuShare = (SupportMenuItem) menu.findItem(R.id.action_share);
 
 		mShareActionProvider = new ShareActionProvider(this);
-        mShareActionProvider.setOnShareTargetSelectedListener(this);
-        mMenuShare.setSupportActionProvider(mShareActionProvider);
-        configureShare();
-        return super.onCreateOptionsMenu(menu);
+		mShareActionProvider.setOnShareTargetSelectedListener(this);
+		mMenuShare.setSupportActionProvider(mShareActionProvider);
+		configureShare();
+		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -125,27 +128,38 @@ public class EmoteDetailActivity extends ActionBarActivity implements EmoteDetai
 	public void onEmoteLoaded(String name, boolean apng) {
 		mShareIntent = new Intent(Intent.ACTION_SEND);
 		mShareIntent.setType("image/*");
-		mShareIntent.putExtra(Intent.EXTRA_STREAM, FileContract.getUriForEmote(name, apng));
-        configureShare();
+		mShareIntent.putExtra(Intent.EXTRA_STREAM,
+				FileContract.getUriForEmote(name, apng));
+		configureShare();
 	}
-	
+
 	@Override
 	public boolean onShareTargetSelected(ShareActionProvider source,
 			Intent intent) {
 		Uri uri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-				
-		Dialog dialog = new Dialog(this, R.style.Theme_Dialog_NoActionBar);
-		dialog.setContentView(R.layout.dialog_loading);
+
+		final LoadingDialog dialog = new LoadingDialog(this);
 		dialog.setCancelable(false);
-		TextView message = (TextView)dialog.findViewById(R.id.text_message);
-		message.setText(R.string.loading_image);
+		dialog.setText(R.string.loading_image);
 		dialog.show();
 		
-		PreloadImageTask task = new PreloadImageTask(this, intent, dialog);
+		final Intent copyIntent = new Intent(intent);
+		PreloadImageTask task = new PreloadImageTask(this, new PreloadImageTask.Callback() {
+			
+			@Override
+			public void onLoaded(boolean result) {
+					dialog.dismiss();
+				
+				if (result && copyIntent != null) {
+					startActivity(copyIntent);
+				}
+				
+			}
+		});
 		task.execute(uri);
-		return true; //Handled
+		return true; // Handled
 	}
-	
+
 	private void configureShare() {
 		if (mMenuShare != null && mShareIntent != null) {
 			mShareActionProvider.setShareIntent(mShareIntent);

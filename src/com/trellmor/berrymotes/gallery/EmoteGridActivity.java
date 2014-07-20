@@ -18,7 +18,6 @@
 
 package com.trellmor.berrymotes.gallery;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +31,7 @@ import android.widget.TextView;
 
 import com.trellmor.berrymotes.EmoteUtils;
 import com.trellmor.berrymotes.provider.FileContract;
+import com.trellmor.widget.LoadingDialog;
 import com.trellmor.widget.ShareActionProvider;
 
 /**
@@ -131,7 +131,8 @@ public class EmoteGridActivity extends ActionBarActivity implements
 			mMenuShare.setSupportActionProvider(mShareActionProvider);
 		}
 
-		final SupportMenuItem fMenuSearch = (SupportMenuItem) menu.findItem(R.id.search);
+		final SupportMenuItem fMenuSearch = (SupportMenuItem) menu
+				.findItem(R.id.search);
 		final SearchView fSearch = (SearchView) fMenuSearch.getActionView();
 
 		fSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -182,14 +183,25 @@ public class EmoteGridActivity extends ActionBarActivity implements
 			Intent intent) {
 		Uri uri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
 
-		Dialog dialog = new Dialog(this, R.style.Theme_Dialog_NoActionBar);
-		dialog.setContentView(R.layout.dialog_loading);
+		final LoadingDialog dialog = new LoadingDialog(this);
 		dialog.setCancelable(false);
-		TextView message = (TextView) dialog.findViewById(R.id.text_message);
-		message.setText(R.string.loading_image);
+		dialog.setText(R.string.loading_image);
 		dialog.show();
 
-		PreloadImageTask task = new PreloadImageTask(this, intent, dialog);
+		final Intent copyIntent = new Intent(intent);
+		PreloadImageTask task = new PreloadImageTask(this,
+				new PreloadImageTask.Callback() {
+
+					@Override
+					public void onLoaded(boolean result) {
+						dialog.dismiss();
+
+						if (result && copyIntent != null) {
+							startActivity(copyIntent);
+						}
+
+					}
+				});
 		task.execute(uri);
 		return true; // Handled
 	}

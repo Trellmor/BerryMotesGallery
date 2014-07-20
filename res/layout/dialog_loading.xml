@@ -22,11 +22,10 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="10dp" >
+    android:padding="10dp">
     
 	<ImageView 
-	    android:id="@+id/imgage_loading"
-	    android:src="@drawable/loading"
+	    android:id="@+id/image_loading"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent" />
 	

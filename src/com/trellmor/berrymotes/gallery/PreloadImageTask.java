@@ -20,9 +20,7 @@ package com.trellmor.berrymotes.gallery;
 
 import java.io.FileNotFoundException;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -31,16 +29,11 @@ public class PreloadImageTask extends AsyncTask<Uri, Void, Boolean> {
 	private static final String TAG = PreloadImageTask.class.getName();
 	
 	private final Context mContext;
-	private final Intent mIntent;
-	private final Dialog mDialog;
+	private final PreloadImageTask.Callback mCallback;
 
-	public PreloadImageTask(Context context, Intent intent) {
-		this(context, intent, null);
-	}
-	public PreloadImageTask(Context context, Intent intent, Dialog dialog) {
+	public PreloadImageTask(Context context, PreloadImageTask.Callback callback) {
 		mContext = context;
-		mIntent = intent;
-		mDialog = dialog;
+		mCallback = callback;
 	}
 	
 	@Override
@@ -56,12 +49,11 @@ public class PreloadImageTask extends AsyncTask<Uri, Void, Boolean> {
 	}
 	
 	protected void onPostExecute(Boolean result) {
-		if (mDialog != null) {
-			mDialog.dismiss();
-		}
-		
-		if (result && mIntent != null) {
-			mContext.startActivity(mIntent);
-		}
+		if (mCallback != null)
+			mCallback.onLoaded(result);
+	}
+	
+	public interface Callback {
+		void onLoaded(boolean result);
 	}
 }

@@ -20,8 +20,6 @@
 
 <resources>
 
-    <style name="activated">
-        <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
-    </style>
-
+    <style name="Theme.Dialog.NoActionBar" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar.MinWidth"></style>
+        
 </resources>

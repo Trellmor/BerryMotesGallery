@@ -20,6 +20,12 @@
 
 <resources>
 
-    <style name="Theme.Dialog.NoActionBar" parent="android:Theme.Holo.Light.Dialog.NoActionBar.MinWidth"></style>
+    <color name="black">#FF000000</color>
+    
+    <style name="Theme.Dialog.NoActionBar" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@drawable/container_dropshadow</item>
+    	<item name="android:textColor">@color/black</item>
+    	<item name="android:windowNoTitle">true</item>
+    </style>
         
 </resources>
