@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.text.ClipboardManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -162,7 +163,10 @@ public class EmoteDetailFragment extends Fragment implements
 
 	private void loadData() {
 		if (mViewLoaded && mDataLoaded) {
-			mImageEmote.setImageDrawable(mEmote);
+			mImageEmote.setBackgroundDrawable(mEmote);
+			if (mEmote instanceof AnimationDrawable) {
+				((AnimationDrawable)mEmote).start();
+			}
 			mTextEmoteName.setText(mName);
 		}
 	}
