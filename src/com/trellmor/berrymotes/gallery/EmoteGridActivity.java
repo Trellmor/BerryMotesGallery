@@ -18,6 +18,8 @@
 
 package com.trellmor.berrymotes.gallery;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -170,6 +172,22 @@ public class EmoteGridActivity extends ActionBarActivity implements
 		switch (item.getItemId()) {
 		case R.id.action_settings:
 			EmoteUtils.launchBerryMotesSettings(this);
+			return true;
+		case R.id.action_export:
+			new AlertDialog.Builder(this)
+					.setTitle(R.string.title_export)
+					.setMessage(R.string.text_export)
+					.setPositiveButton(R.string.export,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									if (!EmoteExportService.isServiceRunning(EmoteGridActivity.this)) {
+										startService(new Intent(EmoteGridActivity.this, EmoteExportService.class));
+									}
+								}
+							}).setNegativeButton(android.R.string.cancel, null)
+					.show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
