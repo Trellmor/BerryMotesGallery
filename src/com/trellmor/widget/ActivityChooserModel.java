@@ -16,6 +16,7 @@
 
 package com.trellmor.widget;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -26,11 +27,9 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -625,7 +624,8 @@ public class ActivityChooserModel extends DataSetObservable {
                 mHistoryFileName);
     }
 
-    private void executePersistHistoryAsyncTaskSDK11() {
+    @SuppressLint("NewApi")
+	private void executePersistHistoryAsyncTaskSDK11() {
         new PersistHistoryAsyncTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR,
                 new ArrayList<HistoricalRecord>(mHistoricalRecords), mHistoryFileName);
     }
