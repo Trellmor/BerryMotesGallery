@@ -91,7 +91,7 @@ public class EmoteGridActivity extends ActionBarActivity implements
 		}
 
 		if (!EmoteUtils.isBerryMotesInstalled(this,
-				EmoteUtils.BERRYMOTES_VERSION_1_2_0)) {
+				EmoteUtils.BERRYMOTES_VERSION_1_3_0)) {
 			EmoteUtils.showInstallDialog(this);
 		}
 	}
@@ -182,8 +182,11 @@ public class EmoteGridActivity extends ActionBarActivity implements
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									if (!EmoteExportService.isServiceRunning(EmoteGridActivity.this)) {
-										startService(new Intent(EmoteGridActivity.this, EmoteExportService.class));
+									if (!EmoteExportService
+											.isServiceRunning(EmoteGridActivity.this)) {
+										startService(new Intent(
+												EmoteGridActivity.this,
+												EmoteExportService.class));
 									}
 								}
 							}).setNegativeButton(android.R.string.cancel, null)

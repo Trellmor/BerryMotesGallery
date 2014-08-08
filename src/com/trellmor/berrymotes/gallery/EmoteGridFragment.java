@@ -55,7 +55,7 @@ public class EmoteGridFragment extends Fragment {
 	 */
 	private int mActivatedPosition = GridView.INVALID_POSITION;
 	private EmoteLoaderCallbacks mLoaderCallbacks;
-	private boolean mWorking;
+	private boolean mWorking = false;
 
 	/**
 	 * A callback interface that all activities containing this fragment must
@@ -133,7 +133,7 @@ public class EmoteGridFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 
 		mWorking = EmoteUtils.isBerryMotesInstalled(getActivity(),
-				EmoteUtils.BERRYMOTES_VERSION_1_2_0);
+				EmoteUtils.BERRYMOTES_VERSION_1_3_0);
 		
 		if (mWorking) {
 			CursorAdapter adapter = new EmoteAdapter(getActivity());

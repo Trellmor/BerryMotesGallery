@@ -18,6 +18,9 @@
 
 package com.trellmor.berrymotes.gallery;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.trellmor.berrymotes.provider.EmotesContract;
 
 import android.content.Context;
@@ -47,15 +50,50 @@ public class EmoteLoaderCallbacks implements LoaderCallbacks<Cursor> {
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String selection = EmotesContract.Emote.COLUMN_INDEX + "=0";
-		String[] selectionArgs = null;
+		StringBuilder selection = new StringBuilder(EmotesContract.Emote.COLUMN_INDEX + "=?");
+		String[] selectionArgs;
 		if (args != null && args.containsKey(ARG_QUERY)) {
-			selection += " AND " + EmotesContract.Emote.COLUMN_NAME + " LIKE ?";
-			selectionArgs = new String[] { "%" + args.getString(ARG_QUERY) + "%" };
+			String[] selections = args.getString(ARG_QUERY).trim().split(" +");
+			
+			List<String> names = new ArrayList<String>(selections.length);
+			List<String> subreddits = new ArrayList<String>(selections.length);
+			for (String sel : selections) {
+				if (sel.startsWith("sr:")) {
+					sel = sel.replaceFirst("sr:", "");
+					if (!"".equals(sel))
+						subreddits.add(sel);
+				} else {
+					names.add(sel);
+				}
+			}
+			
+			selectionArgs = new String[1 + names.size() + subreddits.size()];
+			if (names.size() > 0) {
+				selection.append(" AND (");
+				for (int i = 0; i < names.size(); i++) {
+					if (i > 0) selection.append(" OR ");
+					selection.append(EmotesContract.Emote.COLUMN_NAME).append(" LIKE ?");
+					selectionArgs[i + 1] = "%" + names.get(i) + "%";
+				}
+				selection.append(")");
+			}
+			
+			if (subreddits.size() > 0) {
+				selection.append(" AND (");
+				for (int i = 0; i < subreddits.size(); i++) {
+					if (i > 0) selection.append(" OR ");
+					selection.append(EmotesContract.Emote.COLUMN_SUBREDDIT).append(" LIKE ?");
+					selectionArgs[i + 1 + names.size()] = "%" + subreddits.get(i) + "%";
+				}
+				selection.append(")");
+			}
+		} else {
+			selectionArgs = new String[1];
 		}
+		selectionArgs[0] = "0";
 		
 		return new CursorLoader(mContext, EmotesContract.Emote.CONTENT_URI,
-				PROJECTION, selection, selectionArgs,
+				PROJECTION, selection.toString(), selectionArgs,
 				EmotesContract.Emote.COLUMN_NAME + " ASC");
 	}
 
