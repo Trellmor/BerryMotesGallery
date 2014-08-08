@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searchable xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:label="@string/title_emote_list"
+    android:hint="@string/search_title"
+    android:searchSuggestAuthority="com.trellmor.berrymotes.gallery.EmoteSearchSuggestionProvider"
+    android:searchSuggestSelection=" ?">
+</searchable>

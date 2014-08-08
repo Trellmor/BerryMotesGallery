@@ -19,11 +19,15 @@
 package com.trellmor.berrymotes.gallery;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SearchRecentSuggestionsProvider;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v7.app.ActionBarActivity;
@@ -144,25 +148,56 @@ public class EmoteGridActivity extends ActionBarActivity implements
 			mMenuShare.setSupportActionProvider(mShareActionProvider);
 		}
 
-		final SupportMenuItem fMenuSearch = (SupportMenuItem) menu
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		final SupportMenuItem menuSearch = (SupportMenuItem) menu
 				.findItem(R.id.search);
-		final SearchView fSearch = (SearchView) fMenuSearch.getActionView();
+		final SearchView fSearchView = (SearchView) menuSearch.getActionView();
 
-		fSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+		fSearchView.setSearchableInfo(searchManager
+				.getSearchableInfo(getComponentName()));
+		fSearchView.setIconifiedByDefault(false);
 
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				mGridFragment.searchEmotes(query);
-				fSearch.clearFocus();
-				return true;
-			}
+		fSearchView
+				.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
-			@Override
-			public boolean onQueryTextChange(String newText) {
-				mGridFragment.searchEmotes(newText);
-				return true;
-			}
-		});
+					@Override
+					public boolean onQueryTextSubmit(String query) {
+						mGridFragment.searchEmotes(query);
+						SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+								EmoteGridActivity.this,
+								EmoteSearchSuggestionProvider.AUTHORITY,
+								EmoteSearchSuggestionProvider.MODE);
+						suggestions.saveRecentQuery(query, null);
+						fSearchView.clearFocus();
+						return true;
+					}
+
+					@Override
+					public boolean onQueryTextChange(String newText) {
+						mGridFragment.searchEmotes(newText);
+						return true;
+					}
+				});
+
+		fSearchView
+				.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+
+					@Override
+					public boolean onSuggestionSelect(int position) {
+						return false;
+					}
+
+					@Override
+					public boolean onSuggestionClick(int position) {
+						Cursor cursor = (Cursor) fSearchView
+								.getSuggestionsAdapter().getItem(position);
+						fSearchView.setQuery(
+								cursor.getString(cursor
+										.getColumnIndex(SearchManager.SUGGEST_COLUMN_QUERY)),
+								false);
+						return true;
+					}
+				});
 
 		return super.onCreateOptionsMenu(menu);
 	}
