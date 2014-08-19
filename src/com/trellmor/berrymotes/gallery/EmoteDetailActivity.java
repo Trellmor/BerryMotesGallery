@@ -19,7 +19,6 @@
 package com.trellmor.berrymotes.gallery;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
