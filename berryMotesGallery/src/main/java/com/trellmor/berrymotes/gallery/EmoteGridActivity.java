@@ -69,6 +69,8 @@ public class EmoteGridActivity extends ActionBarActivity implements EmoteGridFra
 	private SupportMenuItem mMenuShare;
 	private ShareActionProvider mShareActionProvider;
 	private EmoteGridFragment mGridFragment;
+	private static final String ACTION_GET_CODE = "com.trellmor.berrymotes.gallery.intent.action.GET_CODE";
+	private static final String EXTRA_CODE = "com.trellmor.berrymotes.gallery.intent.extra.CODE";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -252,7 +254,7 @@ public class EmoteGridActivity extends ActionBarActivity implements EmoteGridFra
 
 	private boolean isPickIntent() {
 		String action = getIntent().getAction();
-		return (Intent.ACTION_PICK.equals(action) || Intent.ACTION_GET_CONTENT.equals(action));
+		return (Intent.ACTION_PICK.equals(action) || Intent.ACTION_GET_CONTENT.equals(action) || ACTION_GET_CODE.equals(action));
 	}
 
 	private void pickEmote(long id) {
@@ -264,29 +266,37 @@ public class EmoteGridActivity extends ActionBarActivity implements EmoteGridFra
 			String name = c.getString(c.getColumnIndex(EmotesContract.Emote.COLUMN_NAME));
 			boolean apng = c.getInt(c.getColumnIndex(EmotesContract.Emote.COLUMN_APNG)) == 1;
 
-			Uri uri = FileContract.getUriForEmote(name, apng);
-			final Intent intent = new Intent();
-			intent.putExtra(Intent.EXTRA_STREAM, uri);
+			// Only code
+			if (ACTION_GET_CODE.equals(getIntent().getAction())) {
+				Intent intent = new Intent();
+				intent.putExtra(EXTRA_CODE, "[](/" + name + ")");
+				setResult(RESULT_OK, intent);
+				finish();
+			} else {
+				Uri uri = FileContract.getUriForEmote(name, apng);
+				final Intent intent = new Intent();
+				intent.putExtra(Intent.EXTRA_STREAM, uri);
 
-			final LoadingDialog dialog = new LoadingDialog(this);
-			dialog.setCancelable(false);
-			dialog.setText(R.string.loading_image);
-			dialog.show();
+				final LoadingDialog dialog = new LoadingDialog(this);
+				dialog.setCancelable(false);
+				dialog.setText(R.string.loading_image);
+				dialog.show();
 
-			PreloadImageTask task = new PreloadImageTask(this, new PreloadImageTask.Callback() {
+				PreloadImageTask task = new PreloadImageTask(this, new PreloadImageTask.Callback() {
 
-				@Override
-				public void onLoaded(boolean result) {
-					dialog.dismiss();
+					@Override
+					public void onLoaded(boolean result) {
+						dialog.dismiss();
 
-					if (result) {
-						setResult(RESULT_OK, intent);
-						finish();
+						if (result) {
+							setResult(RESULT_OK, intent);
+							finish();
+						}
+
 					}
-
-				}
-			});
-			task.execute(uri);
+				});
+				task.execute(uri);
+			}
 		}
 		c.close();
 	}
