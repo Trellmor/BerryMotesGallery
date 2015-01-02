@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+	BerryMotes Gallery 
+	Copyright (C) 2014 Daniel Triendl <trellmor@trellmor.com>
+	
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	 
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.trellmor.berrymotes.gallery"
+    android:versionCode="10200"
+    android:versionName="1.2.0" >
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.BerryMotes" >
+        <activity
+            android:name="com.trellmor.berrymotes.gallery.EmoteGridActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PICK" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name="com.trellmor.berrymotes.gallery.EmoteDetailActivity"
+            android:label="@string/title_emote_detail"
+            android:parentActivityName="com.trellmor.berrymotes.gallery.EmoteGridActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.trellmor.berrymotes.gallery.EmoteGridActivity" />
+        </activity>
+        
+        <service android:name="com.trellmor.berrymotes.gallery.EmoteExportService"></service>
+        <provider
+            android:name="com.trellmor.berrymotes.gallery.EmoteSearchSuggestionProvider"
+            android:authorities="com.trellmor.berrymotes.gallery.EmoteSearchSuggestionProvider" 
+            android:exported="false" />
+    </application>
+
+</manifest>

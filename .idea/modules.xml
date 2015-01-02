@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BerryMotesGallery.iml" filepath="$PROJECT_DIR$/BerryMotesGallery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/berryMotesGallery/berryMotesGallery.iml" filepath="$PROJECT_DIR$/berryMotesGallery/berryMotesGallery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libBerryMotes/libBerryMotes.iml" filepath="$PROJECT_DIR$/libBerryMotes/libBerryMotes.iml" />
+    </modules>
+  </component>
+</project>
+
