@@ -71,7 +71,7 @@ class EmoteLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
 			if (names.size() > 0) {
 				selection.append(" AND (");
 				for (int i = 0; i < names.size(); i++) {
-					if (i > 0) selection.append(" OR ");
+					if (i > 0) selection.append(" AND ");
 					selection.append(EmotesContract.Emote.COLUMN_NAME).append(" LIKE ?");
 					selectionArgs[i + 1] = "%" + names.get(i) + "%";
 				}
