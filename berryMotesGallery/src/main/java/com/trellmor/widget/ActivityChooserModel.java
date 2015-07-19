@@ -22,8 +22,6 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.database.DataSetObservable;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.v4.os.AsyncTaskCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
@@ -576,8 +574,7 @@ public class ActivityChooserModel extends DataSetObservable {
         }
         mHistoricalRecordsChanged = false;
         if (!TextUtils.isEmpty(mHistoryFileName)) {
-            AsyncTaskCompat.executeParallel(new PersistHistoryAsyncTask(),
-                    mHistoricalRecords, mHistoryFileName);
+            new PersistHistoryAsyncTask().execute(mHistoricalRecords, mHistoryFileName);
         }
     }
 
@@ -973,7 +970,7 @@ public class ActivityChooserModel extends DataSetObservable {
         }
         try {
             XmlPullParser parser = Xml.newPullParser();
-            parser.setInput(fis, null);
+            parser.setInput(fis, "UTF-8");
 
             int type = XmlPullParser.START_DOCUMENT;
             while (type != XmlPullParser.END_DOCUMENT && type != XmlPullParser.START_TAG) {
@@ -1087,6 +1084,7 @@ public class ActivityChooserModel extends DataSetObservable {
                 Log.e(LOG_TAG, "Error writing historical recrod file: " + mHistoryFileName, ioe);
             } finally {
                 mCanReadHistoricalData = true;
+                mHistoricalRecordsChanged = true;
                 if (fos != null) {
                     try {
                         fos.close();

@@ -63,7 +63,7 @@
 	</style>
 
 	<style name="TextAppearance.ShareList" parent="TextAppearance.AppCompat.Widget.PopupMenu.Large">
-		<item name="android:textColor">@android:color/white</item>
+		<item name="android:textColor">@android:color/black</item>
 		<item name="android:textSize">18sp</item>
 	</style>
 

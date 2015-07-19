@@ -95,9 +95,8 @@ public class EmoteDetailActivity extends ActionBarActivity implements EmoteDetai
 		// Locate MenuItem with ShareActionProvider
 		mMenuShare = (SupportMenuItem) menu.findItem(R.id.action_share);
 
-		mShareActionProvider = new ShareActionProvider(this.getSupportActionBar().getThemedContext());
+		mShareActionProvider = (ShareActionProvider) mMenuShare.getSupportActionProvider();
 		mShareActionProvider.setOnShareTargetSelectedListener(this);
-		mMenuShare.setSupportActionProvider(mShareActionProvider);
 		configureShare();
 		return super.onCreateOptionsMenu(menu);
 	}

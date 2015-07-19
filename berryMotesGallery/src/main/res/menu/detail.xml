@@ -27,7 +27,8 @@
         android:orderInCategory="100"
         trellmor:showAsAction="always"
         android:title="@string/action_share"
-        android:visible="false" />
+        android:visible="false"
+        trellmor:actionProviderClass="com.trellmor.widget.ShareActionProvider" />
     
     <item
         android:id="@+id/action_settings"
